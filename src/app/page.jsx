@@ -94,7 +94,7 @@ export default function Home() {
               <div className="hero-copy">
                 <span className="hero-kicker">Tenha um site moderno para o seu negócio</span>
                 <h1 className="hero-title">
-                  Desenvolvedor full stack. Já tem uma ideia para o seu negócio? Então vamos colocá-la em prática!
+                  Já tem uma ideia para o seu negócio? Então vamos colocá-la em prática!
                 </h1>
                 <p className="hero-description">
                   Crio estruturas modernas, com visual marcante e foco em conversão de visitante para cliente, visando destacar
@@ -305,7 +305,7 @@ export default function Home() {
                 </a>
               </p>
               <p className="mb-0">
-                Me envie uma mensagem com a sua ideia, e eu retorno com os práximos passos.
+                Me envie uma mensagem com a sua ideia, e eu retorno com os próximos passos.
               </p>
             </RevealOnScroll>
           </div>
