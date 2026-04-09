@@ -419,6 +419,13 @@ export default function Home() {
                         }
                       >
                         <p>{activeProject.description}</p>
+                        <button
+                          type="button"
+                          className="project-description-close"
+                          onClick={() => setIsProjectDetailsOpen(false)}
+                        >
+                          fechar
+                        </button>
                       </div>
                       <a
                         href={activeProject.href}
