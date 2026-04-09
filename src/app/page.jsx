@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import RevealOnScroll from '../components/RevealOnScroll'
 
 const WHATSAPP_NUMBER = '5516993948138'
@@ -24,42 +24,19 @@ const serviceCards = [
     title: 'Landing page comercial',
     price: 'A partir de R$ 600',
     description:
-      'Ideal para prestadores de servico, anuncios e campanhas que precisam transformar visitas em conversas no WhatsApp.'
+      'Site de página única feita exclusivamente para tornar visistantes em clientes.'
   },
   {
     title: 'Site institucional',
-    price: 'Escopo sob medida',
+    price: 'Feito sob medida',
     description:
-      'Perfeito para negocios locais que precisam apresentar servicos, gerar confianca e facilitar pedidos de orcamento.'
+      'Um site mais completo que contém mais páginas e mostre mais sobre a empresa aos visitantes.'
   },
   {
-    title: 'Reformulacao visual',
-    price: 'Analise personalizada',
+    title: 'Reparar e atualizar',
+    price: 'Site pouco visitado?',
     description:
-      'Atualizo paginas antigas para parecerem mais profissionais, claras e convincentes para novos clientes.'
-  }
-]
-
-const differentials = [
-  {
-    title: 'Foco comercial de verdade',
-    description:
-      'Nao entrego so uma pagina bonita. Estruturo o site para destacar seus servicos, reduzir duvidas e incentivar o contato.'
-  },
-  {
-    title: 'Pensado para negocios locais',
-    description:
-      'A linguagem, a hierarquia e os CTAs sao organizados para quem vende servicos na cidade e depende de confianca imediata.'
-  },
-  {
-    title: 'Mais praticidade no atendimento',
-    description:
-      'Formulario e botoes de WhatsApp ajudam o cliente a pedir orcamento rapido, sem precisar procurar informacoes.'
-  },
-  {
-    title: 'Visual profissional em qualquer tela',
-    description:
-      'O projeto nasce responsivo para transmitir credibilidade no celular, no computador e nos links compartilhados.'
+      'Caso já tenha um site e precise implementar novas funções ou atualizações.'
   }
 ]
 
@@ -67,6 +44,7 @@ const projects = [
   {
     src: '/assets/img/barbearia-hero.jpg',
     alt: 'Preview do projeto de barbearia',
+    href: '/assets/img/barbearia-hero.jpg',
     label: 'Barbearia premium',
     summary: 'Solucao visual para atrair agendamentos e reforcar estilo profissional.',
     description:
@@ -79,6 +57,7 @@ const projects = [
   {
     src: '/assets/img/eletricista-hero.jpg',
     alt: 'Preview do projeto de eletricista',
+    href: '/assets/img/eletricista-hero.jpg',
     label: 'Eletricista autonomo',
     summary: 'Pagina feita para transmitir seguranca e gerar pedidos de orcamento.',
     description:
@@ -91,6 +70,7 @@ const projects = [
   {
     src: '/assets/img/restaurante-hero.jpg',
     alt: 'Preview do projeto de restaurante',
+    href: '/assets/img/restaurante-hero.jpg',
     label: 'Restaurante local',
     summary: 'Site pensado para apresentar ambiente, cardapio e facilitar reservas.',
     description:
@@ -121,12 +101,6 @@ const technologies = [
   }
 ]
 
-const authorityPoints = [
-  'Desenvolvedor web focado em sites comerciais para negocios locais e profissionais autonomos.',
-  'Atencao especial a copy, clareza da oferta, design responsivo e fluxo de contato.',
-  'Projetos criados para fortalecer a imagem do negocio e transformar visitas em oportunidades reais.'
-]
-
 const contactBenefits = [
   'Resposta com direcao clara para o seu projeto',
   'Orcamento inicial sem complicacao',
@@ -143,6 +117,10 @@ const initialForm = {
 
 export default function Home() {
   const [formData, setFormData] = useState(initialForm)
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0)
+  const [openServiceIndex, setOpenServiceIndex] = useState(null)
+  const [isProjectDetailsOpen, setIsProjectDetailsOpen] = useState(false)
+  const touchStartX = useRef(null)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -166,6 +144,49 @@ export default function Home() {
     return encodeURIComponent(lines.join('\n'))
   }
 
+  function goToPreviousProject() {
+    setIsProjectDetailsOpen(false)
+    setActiveProjectIndex((current) => (current === 0 ? projects.length - 1 : current - 1))
+  }
+
+  function goToNextProject() {
+    setIsProjectDetailsOpen(false)
+    setActiveProjectIndex((current) => (current === projects.length - 1 ? 0 : current + 1))
+  }
+
+  function handleProjectTouchStart(event) {
+    touchStartX.current = event.touches[0].clientX
+  }
+
+  function handleProjectTouchEnd(event) {
+    if (touchStartX.current === null) return
+
+    const touchEndX = event.changedTouches[0].clientX
+    const deltaX = touchStartX.current - touchEndX
+
+    if (Math.abs(deltaX) > 45) {
+      if (deltaX > 0) {
+        goToNextProject()
+      } else {
+        goToPreviousProject()
+      }
+    }
+
+    touchStartX.current = null
+  }
+
+  useEffect(() => {
+    if (isProjectDetailsOpen) return undefined
+
+    const intervalId = window.setInterval(() => {
+      setIsProjectDetailsOpen(false)
+      setActiveProjectIndex((current) => (current === projects.length - 1 ? 0 : current + 1))
+    }, 5000)
+
+    return () => window.clearInterval(intervalId)
+  }, [isProjectDetailsOpen])
+
+  const activeProject = projects[activeProjectIndex]
   const whatsappBudgetLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMessage()}`
   const whatsappDirectLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     'Ola, Joao Vitor. Quero conversar sobre um site para meu negocio.'
@@ -178,19 +199,20 @@ export default function Home() {
           <div className="hero-shell">
             <div className="hero-layout">
               <div className="hero-copy">
-                <span className="hero-kicker">Sites para negocios locais e prestadores de servico</span>
+                <span className="hero-kicker">Criacao de sites para negocios locais e profissionais autonomos</span>
                 <h1 className="hero-title">
-                  Seu negocio precisa de um site que passe confianca e gere pedidos de orcamento.
+                  Seu site precisa explicar bem o seu negocio e transformar visitas em conversas.
                 </h1>
                 <p className="hero-description">
-                  Desenvolvo paginas profissionais, modernas e orientadas para conversao, com foco em apresentar
-                  bem seu servico, valorizar sua marca e levar o cliente ao contato com mais rapidez.
+                  Eu crio paginas com estrutura comercial, visual profissional e foco em conversao para ajudar sua
+                  empresa a parecer mais confiavel, apresentar servicos com clareza e facilitar o contato pelo
+                  WhatsApp.
                 </p>
 
                 <div className="hero-badges">
+                  <span className="hero-badge">Estrutura pensada para vender</span>
                   <span className="hero-badge">A partir de R$ 600</span>
-                  <span className="hero-badge">WhatsApp integrado</span>
-                  <span className="hero-badge">Visual profissional no celular</span>
+                  <span className="hero-badge">Projetos feitos por mim</span>
                 </div>
 
                 <div className="hero-actions">
@@ -203,7 +225,7 @@ export default function Home() {
                     Pedir orcamento no WhatsApp
                   </a>
                   <a href="#projetos" className="btn btn-outline-primary btn-lg">
-                    Ver exemplos de site
+                    Ver projetos criados
                   </a>
                 </div>
 
@@ -304,75 +326,45 @@ export default function Home() {
       <section className="content-section" id="servicos">
         <div className="hero-fluid">
           <div className="section-shell">
-            <RevealOnScroll className="section-heading">
-              <span className="section-kicker">Servicos</span>
-              <h2>Solucoes criadas para transformar sua presenca online em uma vitrine mais convincente.</h2>
-              <p className="section-lead">
-                Cada formato e pensado para ajudar o cliente a entender seu servico, confiar no seu negocio e pedir
-                orcamento com mais facilidade.
-              </p>
-            </RevealOnScroll>
-
-            <div className="service-grid">
-              {serviceCards.map((service, index) => (
-                <RevealOnScroll as="article" className="service-card" key={service.title} delay={index * 100}>
-                  <span className="service-price">{service.price}</span>
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                  <a href="#contato" className="inline-link">
-                    Quero um site assim
-                  </a>
-                </RevealOnScroll>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="content-section" id="sobre">
-        <div className="hero-fluid">
-          <div className="section-shell authority-shell">
-            <div className="section-grid-two authority-grid">
-              <RevealOnScroll className="section-heading section-heading-left" direction="left">
-                <span className="section-kicker">Autoridade</span>
-                <h2>Desenvolvimento web com olhar comercial para quem precisa vender mais e parecer mais profissional.</h2>
+            <div className="services-layout">
+              <RevealOnScroll className="section-heading section-heading-left services-copy" direction="left">
+                <span className="section-kicker services-kicker">Servicos</span>
+                <h2>Qual site se adequa à sua empresa?</h2>
               </RevealOnScroll>
 
-              <RevealOnScroll className="section-card authority-card" direction="right" delay={120}>
-                <p>
-                  Sou Joao Vitor, desenvolvedor web com foco em criar sites para negocios locais, autonomos e
-                  prestadores de servico que precisam se apresentar melhor online e gerar mais oportunidades de contato.
-                </p>
-                <p>
-                  Meu trabalho une design limpo, estrutura estrategica e linguagem comercial para fazer o visitante
-                  entender rapidamente o valor do seu servico e dar o proximo passo.
-                </p>
-                <ul className="feature-list">
-                  {authorityPoints.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </RevealOnScroll>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="content-section" id="diferenciais">
-        <div className="hero-fluid">
-          <div className="section-shell">
-            <RevealOnScroll className="section-heading">
-              <span className="section-kicker">Diferenciais</span>
-              <h2>O site precisa trabalhar a favor do seu negocio, nao apenas ocupar espaco online.</h2>
-            </RevealOnScroll>
-
-            <div className="benefit-grid">
-              {differentials.map((item, index) => (
-                <RevealOnScroll as="article" className="benefit-card" key={item.title} delay={index * 90}>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </RevealOnScroll>
-              ))}
+              <div className="service-grid">
+                {serviceCards.map((service, index) => (
+                  <RevealOnScroll as="article" className="service-card" key={service.title} delay={index * 100}>
+                    <span className="service-price">{service.price}</span>
+                    <div className="service-card-actions">
+                      <button
+                        type="button"
+                        className="service-more"
+                        onClick={() => setOpenServiceIndex((current) => (current === index ? null : index))}
+                        aria-expanded={openServiceIndex === index}
+                      >
+                        <span>mais</span>
+                      </button>
+                    </div>
+                    <h3>{service.title}</h3>
+                    {openServiceIndex === index && (
+                      <div className="service-description">
+                        <p>{service.description}</p>
+                        <button
+                          type="button"
+                          className="service-description-close"
+                          onClick={() => setOpenServiceIndex(null)}
+                        >
+                          fechar
+                        </button>
+                      </div>
+                    )}
+                    <a href="#contato" className="service-cta">
+                      Quero este!
+                    </a>
+                  </RevealOnScroll>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -381,55 +373,73 @@ export default function Home() {
       <section className="content-section" id="projetos">
         <div className="hero-fluid">
           <div className="section-shell">
-            <RevealOnScroll className="section-heading">
-              <span className="section-kicker">Projetos</span>
-              <h2>Exemplos de como um site pode apresentar melhor o servico e aumentar a percepcao de valor.</h2>
-            </RevealOnScroll>
+            <div className="projects-layout">
+              <RevealOnScroll className="section-heading section-heading-left projects-copy" direction="left">
+                <span className="section-kicker projects-kicker">Projetos</span>
+                <h2>Apresentação de cada modelo de site.</h2>
+              </RevealOnScroll>
 
-            <div className="project-grid">
-              {projects.map((project, index) => (
-                <RevealOnScroll
-                  as="article"
-                  className="project-card"
-                  key={project.label}
-                  delay={index * 120}
+              <RevealOnScroll className="project-carousel" direction="right">
+                <div
+                  className="project-carousel-track"
+                  onTouchStart={handleProjectTouchStart}
+                  onTouchEnd={handleProjectTouchEnd}
                 >
-                  <div className="project-card-media">
-                    <Image
-                      src={project.src}
-                      alt={project.alt}
-                      width={900}
-                      height={620}
-                      sizes="(max-width: 991px) 100vw, 33vw"
-                      priority={index === 0}
-                      className="project-shot-image"
-                    />
-                    {project.extraImages && (
-                      <div className="project-card-thumbs">
-                        {project.extraImages.map((image, imageIndex) => (
-                          <Image
-                            key={image}
-                            src={image}
-                            alt={`${project.label} detalhe ${imageIndex + 1}`}
-                            width={320}
-                            height={220}
-                            sizes="(max-width: 991px) 50vw, 12vw"
-                            className="project-thumb-image"
-                          />
-                        ))}
+                  <button type="button" className="project-carousel-arrow" onClick={goToPreviousProject} aria-label="Projeto anterior">
+                    ‹
+                  </button>
+
+                  <article className="project-carousel-card">
+                    <div className="project-carousel-media">
+                      <Image
+                        src={activeProject.src}
+                        alt={activeProject.alt}
+                        width={360}
+                        height={360}
+                        sizes="(max-width: 991px) 60vw, 280px"
+                        priority
+                        className="project-carousel-image"
+                      />
+                    </div>
+                    <div className="project-carousel-body">
+                      <h3>{activeProject.label}</h3>
+                      <button
+                        type="button"
+                        className="project-more"
+                        onClick={() => setIsProjectDetailsOpen((current) => !current)}
+                        aria-expanded={isProjectDetailsOpen}
+                      >
+                        mais
+                      </button>
+                      <div
+                        className={
+                          isProjectDetailsOpen
+                            ? 'project-description-content is-open'
+                            : 'project-description-content'
+                        }
+                      >
+                        <p>{activeProject.description}</p>
                       </div>
-                    )}
-                  </div>
-                  <div className="project-card-body">
-                    <span className="project-summary">{project.summary}</span>
-                    <h3>{project.label}</h3>
-                    <p>{project.description}</p>
-                    <a href="#contato" className="inline-link">
-                      Quero um projeto com essa proposta
-                    </a>
-                  </div>
-                </RevealOnScroll>
-              ))}
+                      <a
+                        href={activeProject.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="project-summary project-summary-link"
+                      >
+                        Ver projeto
+                      </a>
+                      <a href="#contato" className="inline-link">
+                        Quero um projeto com essa proposta
+                      </a>
+                    </div>
+                  </article>
+
+                  <button type="button" className="project-carousel-arrow" onClick={goToNextProject} aria-label="Proximo projeto">
+                    ›
+                  </button>
+                </div>
+
+              </RevealOnScroll>
             </div>
           </div>
         </div>
@@ -452,25 +462,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="content-section">
-        <div className="hero-fluid">
-          <RevealOnScroll className="cta-band">
-            <div>
-              <span className="section-kicker">Pronto para vender melhor online?</span>
-              <h2>Se o seu negocio precisa parecer mais profissional e facilitar o contato, vamos tirar isso do papel.</h2>
-            </div>
-            <a
-              href={whatsappDirectLink}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-primary btn-lg"
-            >
-              Falar agora no WhatsApp
-            </a>
-          </RevealOnScroll>
         </div>
       </section>
 
