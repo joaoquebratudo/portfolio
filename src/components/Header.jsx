@@ -1,19 +1,18 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useEffect } from 'react'
 
 const navItems = [
   { href: '#inicio', label: 'Inicio' },
+  { href: '#servicos', label: 'Servicos' },
   { href: '#projetos', label: 'Projetos' },
-  { href: '#sobre', label: 'Sobre' },
-  { href: '#tecnologias', label: 'Tecnologias' },
+  { href: '#diferenciais', label: 'Diferenciais' },
   { href: '#contato', label: 'Contato' }
 ]
 
 function Header() {
   useEffect(() => {
-    // Carrega apenas o necessario para o menu mobile sem puxar o bundle inteiro.
     import('bootstrap/js/dist/collapse')
   }, [])
 
@@ -41,12 +40,14 @@ function Header() {
             <ul className="navbar-nav mx-auto">
               {navItems.map((item) => (
                 <li className="nav-item" key={item.href}>
-                  <Link href={item.href} className="nav-link">{item.label}</Link>
+                  <Link href={item.href} className="nav-link">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
 
-            <Link href="#contato" className="btn btn-primary">
+            <Link href="#orcamento" className="btn btn-primary">
               Pedir orcamento
             </Link>
           </div>

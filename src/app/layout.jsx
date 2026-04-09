@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+﻿import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -7,16 +7,16 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Nunes Tech | Desenvolvimento Web',
+  title: 'Nunes Tech | Sites Profissionais para Negocios Locais',
   description:
-    'Nunes Tech especializada em desenvolvimento web, criacao de sites profissionais, landing pages e sites institucionais.',
+    'Criacao de sites profissionais para negocios locais e prestadores de servico, com foco em autoridade, orcamento pelo WhatsApp e conversao.',
   alternates: {
     canonical: '/'
   },
   openGraph: {
-    title: 'Nunes Tech | Desenvolvimento Web',
+    title: 'Nunes Tech | Sites Profissionais para Negocios Locais',
     description:
-      'Conheca a Nunes Tech, com projetos de sites profissionais, landing pages e solucoes web para negocios.',
+      'Landing pages e sites institucionais para atrair clientes, transmitir confianca e facilitar pedidos de orcamento.',
     url: siteUrl,
     siteName: 'Nunes Tech',
     locale: 'pt_BR',
@@ -24,9 +24,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nunes Tech | Desenvolvimento Web',
+    title: 'Nunes Tech | Sites Profissionais para Negocios Locais',
     description:
-      'Nunes Tech com projetos, tecnologias e formas de contato para desenvolvimento de sites profissionais.'
+      'Sites para negocios locais e prestadores de servico com foco em apresentacao comercial e geracao de contatos.'
   },
   robots: {
     index: true,
@@ -38,7 +38,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body>
-        {/* Estrutura base compartilhada por todas as paginas do portfolio. */}
         <Header />
         <main>{children}</main>
         <Footer />
